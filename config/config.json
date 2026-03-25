@@ -1,0 +1,4 @@
+{
+  "threshold": 0.4,
+  "model_path":"models/churn_lr_pipeline"
+}

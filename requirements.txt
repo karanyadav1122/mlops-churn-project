@@ -1,0 +1,7 @@
+fastapi==0.135.2
+uvicorn==0.42.0
+pyspark==4.1.1
+py4j==0.10.9.9
+pandas==3.0.1
+numpy==2.4.3
+kafka-python==2.3.0

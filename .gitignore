@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual env
+venv/
+
+# Logs
+logs/
+*.log
+
+# MLflow
+mlruns/
+mlflow.db
+
+# Models
+models/
+
+# Data (VERY IMPORTANT)
+data/
+
+# Spark
+_spark_metadata/
+
+# Checkpoints
+checkpoints/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Env files
+.env
+.env.*
+
+# OS
+.DS_Store
+Thumbs.db
