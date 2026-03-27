@@ -122,3 +122,9 @@ docker run -p 8000:8000 churn-api
 ##  Author
 
 Karan Yadav
+
+
+
+https://chatgpt.com/c/69bd62e5-cc7c-832b-84f2-f62b42e656b8
+
+
