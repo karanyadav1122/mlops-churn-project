@@ -16,7 +16,7 @@ mlflow.db
 # Models
 models/
 
-# Data (VERY IMPORTANT)
+# Data 
 data/
 
 # Spark
