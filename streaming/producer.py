@@ -1,17 +1,21 @@
-import json
+import os
 import time
+import json
 from kafka import KafkaProducer
 
-producer = KafkaProducer(
-    bootstrap_servers= 'localhost:9092',
-    value_serializer= lambda v: json.dumps(v).encode('utf-8')
-)
+TOPIC_NAME = "churn_input"
+KAFKA_BOOTSTRAP_SERVERS = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "kafka:9092")
 
-TOPIC_NAME= 'churn_input'
+print(f"Connecting to Kafka at: {KAFKA_BOOTSTRAP_SERVERS}", flush=True)
+time.sleep(15)
+
+producer = KafkaProducer(
+    bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
+    value_serializer=lambda v: json.dumps(v).encode("utf-8")
+)
 
 def generate_event():
     return {
-         
         "gender": "Male",
         "location": "Texas",
         "subscription_type": "Basic",
@@ -22,12 +26,12 @@ def generate_event():
         "tenure_bucket": "new",
         "charge_bucket": "high"
     }
-        
+
 if __name__ == "__main__":
-    print("Inference producer started")
+    print("Producer started...", flush=True)
     while True:
-        event= generate_event()
-        producer.send(TOPIC_NAME, value= event)
-        print(f"Sent: {event}")
-        time.sleep(30)
-                
+        event = generate_event()
+        producer.send(TOPIC_NAME, value=event)
+        producer.flush()
+        print(f"Sent: {event}", flush=True)
+        time.sleep(5)
