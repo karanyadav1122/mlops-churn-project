@@ -17,9 +17,9 @@ services:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:29092
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
 
   kafka-init:
@@ -27,7 +27,7 @@ services:
     depends_on:
       - kafka
     entrypoint: /bin/sh
-    command: -c "sleep 20 && kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic churn_input --partitions 1 --replication-factor 1 && kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic churn_output --partitions 1 --replication-factor 1"
+    command: -c "sleep 20 && kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists --topic churn_input --partitions 1 --replication-factor 1 && kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists --topic churn_output --partitions 1 --replication-factor 1 && kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists --topic churn_features --partitions 1 --replication-factor 1"
 
   api:
     build:
@@ -45,7 +45,7 @@ services:
     depends_on:
       - kafka-init
     environment:
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
     command: ["python", "streaming/producer.py"]
 
   consumer:
@@ -56,6 +56,6 @@ services:
       - kafka-init
       - api
     environment:
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
       API_URL: http://api:8000/predict
     command: ["python", "streaming/consumer.py"]
