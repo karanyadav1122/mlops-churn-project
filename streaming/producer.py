@@ -4,7 +4,7 @@ import json
 from kafka import KafkaProducer
 
 TOPIC_NAME = "churn_input"
-KAFKA_BOOTSTRAP_SERVERS = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "kafka:9092")
+KAFKA_BOOTSTRAP_SERVERS = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "kafka:29092")
 
 print(f"Connecting to Kafka at: {KAFKA_BOOTSTRAP_SERVERS}", flush=True)
 time.sleep(15)
