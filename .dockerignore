@@ -5,3 +5,7 @@ __pycache__/
 notebooks/
 checkpoints/
 data/
+.git
+mlruns/
+logs/
+.env

@@ -25,9 +25,8 @@ logging.basicConfig(
 logger= logging.getLogger("churn_api")
 
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-# MODEL_PATH = os.path.join(BASE_DIR, "models","churn_lr_pipeline")
-MODEL_URI = "models:/churn_model@champion"
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+MODEL_PATH = os.path.join(BASE_DIR, "models","churn_lr_pipeline")
 THRESHOLD = 0.4
 
 app = FastAPI(title= "Churn prediction API")
@@ -52,9 +51,9 @@ spark = SparkSession.builder \
         
 spark.sparkContext.setLogLevel("WARN")
 
-model = mlflow.spark.load_model(MODEL_URI)
+model = PipelineModel.load(MODEL_PATH)
 
-logger.info(f"Model loaded from: {MODEL_URI}")
+logger.info(f"Model loaded from: {MODEL_PATH}")
 logger.info(f"Using threshold: {THRESHOLD}")
 
 
@@ -128,5 +127,3 @@ def predict(customer: CustomerInput):
     raise HTTPException(status_code = 500, detail= "Internal Sever Error")
 
            
-  
-  
