@@ -6,6 +6,6 @@ notebooks/
 checkpoints/
 data/
 .git
-mlruns/
+
 logs/
 .env

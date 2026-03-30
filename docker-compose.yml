@@ -18,8 +18,8 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
 
   kafka-init:
@@ -45,7 +45,7 @@ services:
     depends_on:
       - kafka-init
     environment:
-      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
     command: ["python", "streaming/producer.py"]
 
   consumer:
@@ -54,8 +54,20 @@ services:
       dockerfile: Dockerfile.consumer
     depends_on:
       - kafka-init
-      - api
+      - mlflow
     environment:
-      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
-      API_URL: http://api:8000/predict
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      API_URL: http://mlflow:5001/invocations
     command: ["python", "streaming/consumer.py"]
+
+  mlflow:
+    build:
+      context: .
+      dockerfile: Dockerfile.mlflow
+    ports:
+      - "5001:5001"
+    environment:
+      MLFLOW_TRACKING_URI: sqlite:////app/mlflow.db
+      MLFLOW_REGISTRY_URI: sqlite:////app/mlflow.db
+    depends_on:
+      - kafka  

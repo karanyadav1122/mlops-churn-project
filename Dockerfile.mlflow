@@ -1,0 +1,20 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y openjdk-21-jdk && \
+    apt-get clean
+
+ENV JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+ENV PATH=$JAVA_HOME/bin:$PATH
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir mlflow==3.10.1 pyspark==4.1.1
+
+COPY . .
+
+EXPOSE 5001
+
+CMD ["sh", "-c", "mlflow models serve -m /app/mlruns/1/47c9246d0ac444bf9c3305a69c728074/artifacts/model -p 5001 --host 0.0.0.0 --env-manager local"]
+

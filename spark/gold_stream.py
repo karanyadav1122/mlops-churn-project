@@ -79,7 +79,7 @@ file_query = df_gold.writeStream \
 kafka_query = df_gold_kafka.writeStream \
          .format("kafka") \
          .outputMode("append") \
-         .option("kafka.bootstrap.servers", "localhost:9092") \
+         .option("kafka.bootstrap.servers", "localhost:29092") \
          .option("topic", "churn_features") \
          .option("checkpointLocation", kafka_checkpoint_path) \
          .start()
