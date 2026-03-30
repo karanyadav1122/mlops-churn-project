@@ -8,7 +8,7 @@ INPUT_TOPIC = "churn_features"
 OUTPUT_TOPIC = "churn_output"
 
 KAFKA_BOOTSTRAP_SERVERS = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "kafka:29092")
-API_URL = os.getenv("API_URL", "http://api:8000/predict")
+API_URL = os.getenv("API_URL", "http://host.docker.internal:5001/invocations")
 
 print(f"Connecting to Kafka at: {KAFKA_BOOTSTRAP_SERVERS}", flush=True)
 print(f"Calling API at: {API_URL}", flush=True)
@@ -20,7 +20,7 @@ consumer = KafkaConsumer(
     bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
     auto_offset_reset="earliest",
     enable_auto_commit=True,
-    group_id="churn-prediction-group-v4",
+    group_id="churn-prediction-group-mlflow-v2",
     value_deserializer=lambda m: json.loads(m.decode("utf-8"))
 )
 
@@ -37,9 +37,13 @@ if __name__ == "__main__":
         print(f"\nReceived event: {event}", flush=True)
 
         try:
-            response = requests.post(API_URL, json=event, timeout=30)
+            response = requests.post(
+                API_URL,
+                json={"dataframe_records": [event]},
+                timeout=30
+            )
             response.raise_for_status()
-            result = response.json()
+            result = response.json()["predictions"][0]
 
             output_event = {
                 "input": event,
@@ -53,4 +57,4 @@ if __name__ == "__main__":
             print(f"Sent to {OUTPUT_TOPIC}: {output_event}", flush=True)
 
         except Exception as e:
-            print(f"Error calling FastAPI: {e}", flush=True)
+            print(f"Error calling MLflow serving endpoint: {e}", flush=True)
