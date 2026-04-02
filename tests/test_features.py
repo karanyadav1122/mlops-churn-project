@@ -5,7 +5,6 @@ def make_gold_features(record: dict) -> dict:
         "is_payment_risky": 1 if record["late_payments"] >= 3 else 0,
     }
 
-
 def test_gold_features_logic():
     record = {
         "support_tickets": 8,

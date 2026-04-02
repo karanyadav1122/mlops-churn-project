@@ -27,7 +27,8 @@ services:
     depends_on:
       - kafka
     entrypoint: /bin/sh
-    command: -c "sleep 20 && kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic churn_input --partitions 1 --replication-factor 1 && kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic churn_output --partitions 1 --replication-factor 1 && kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic churn_features --partitions 1 --replication-factor 1"
+    command: -c "sleep 20 && kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists --topic churn_input --partitions 1 --replication-factor 1 && kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists --topic churn_output --partitions 1 --replication-factor 1 && kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists --topic churn_features --partitions 1 --replication-factor 1"
+
   api:
     build:
       context: .

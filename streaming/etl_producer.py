@@ -22,12 +22,10 @@ def generate_customer_event():
         "late_payments": random.randint(0, 5),
         "timestamp": datetime.utcnow().isoformat()
     }
-
-
 producer = KafkaProducer(bootstrap_servers='localhost:9092',
-                         value_serializer=lambda v: json.dumps(v).encode('utf-8')
-                         )
-
+                             value_serializer= lambda v: json.dumps(v).encode('utf-8')
+                             )
+    
 TOPIC_NAME = 'churn_events'
 
 if __name__ == "__main__":
