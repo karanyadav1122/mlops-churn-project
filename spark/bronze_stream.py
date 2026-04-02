@@ -26,8 +26,3 @@ query = df_raw.writeStream \
     .start()
 
 query.awaitTermination()
-
-
-
-
-
