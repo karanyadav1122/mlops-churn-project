@@ -5,7 +5,6 @@ client = TestClient(app)
 
 def test_predict_endpoint_exists():
     payload = {
-      "dataframe_records":[{
         "gender": "Male",
             "location": "Texas",
             "subscription_type": "Basic",
@@ -15,8 +14,8 @@ def test_predict_endpoint_exists():
             "late_payments": 3,
             "tenure_bucket": "new",
             "charge_bucket": "high"
-      }]
-    }
+      }
+    
     
     response = client.post("/predict",json= payload)
     assert response.status_code in (200,422)

@@ -1,17 +1,19 @@
 import os
 import time
 import json
-from kafka import KafkaProducer
 
 TOPIC_NAME = "churn_input"
 KAFKA_BOOTSTRAP_SERVERS = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "kafka:9092")
 
 def create_producer():
+    
+    from kafka import KafkaProducer
+    
     print(f"connecting to kafka at: {KAFKA_BOOTSTRAP_SERVERS}", flush = True)
     time.sleep(15)
     return KafkaProducer(
         bootstrap_servers = KAFKA_BOOTSTRAP_SERVERS,
-        value_serializer = lambda v: json.dumps(v).encode("utf_8")
+        value_serializer = lambda v: json.dumps(v).encode("utf-8")
         )
 
 
