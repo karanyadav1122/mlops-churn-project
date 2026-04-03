@@ -9,6 +9,9 @@ from pyspark.ml import PipelineModel
 from pyspark.ml.functions import vector_to_array
 from fastapi import HTTPException
 
+spark = None
+model = None
+
 os.makedirs("logs", exist_ok=True)
 
 logging.basicConfig(
@@ -43,18 +46,29 @@ class CustomerInput(BaseModel):
     charge_bucket: Literal["low", "medium", "high"]
 
 
-spark = SparkSession.builder \
-    .appName("ChurnPredictionAPI") \
-    .master("local[*]") \
-    .config("spark.sql.shuffle.partitions", "2") \
-    .getOrCreate()
+def get_spark():
+    global spark
+    if spark is None:
+        spark = (
+            SparkSession.builder
+            .appName("ChurnPredictionAPI")
+            .master("local[*]")
+            .config("spark.sql.shuffle.partitions", "2")
+            .getOrCreate()
+        )
+
+        spark.sparkContext.setLogLevel("WARN")
+    return spark
 
 
-spark.sparkContext.setLogLevel("WARN")
+def get_model():
+    global model
+    if model is None:
+        model = PipelineModel.load(MODEL_PATH)
+        logger.info(f"Model laoded from: {MODEL_PATH}")
+    return model
 
-model = PipelineModel.load(MODEL_PATH)
 
-logger.info(f"Model loaded from: {MODEL_PATH}")
 logger.info(f"Using threshold: {THRESHOLD}")
 
 
@@ -85,6 +99,8 @@ def predict(customer: CustomerInput):
             f"charge_bucket={customer.charge_bucket}"
 
         )
+        spark_session = get_spark()
+        loaded_model = get_model()
 
         data = [{
             "gender": customer.gender,
@@ -100,9 +116,9 @@ def predict(customer: CustomerInput):
         }
         ]
 
-        df = spark.createDataFrame(data)
+        df = spark_session.createDataFrame(data)
 
-        predictions = model.transform(df)
+        predictions = loaded_model.transform(df)
 
         result = predictions.withColumn(
             "churn_prob",
